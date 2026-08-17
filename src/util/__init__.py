@@ -10,7 +10,7 @@ def open(file, mode, *args, **kwargs):
         else:
             fh = sys.stdout
     else:
-        fh = builtins.open(file, mode)
+        fh = builtins.open(file, mode, *args, **kwargs)
     try:
         yield fh
     finally:

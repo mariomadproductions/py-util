@@ -2,17 +2,25 @@ import sys
 import contextlib
 import builtins
 
+#removed the "except AttributeError" bit as it could hide errors?
 @contextlib.contextmanager
-def open(file, mode, *args, **kwargs):
-    if file == '-':
-        if mode is None or mode == '' or 'r' in mode:
-            fh = sys.stdin
+def open(filename: str, mode: str = 'r', *args, **kwargs):
+    if filename == '-':
+        if 'r' in mode:
+            stream = sys.stdin
         else:
-            fh = sys.stdout
+            stream = sys.stdout
+        if 'b' in mode:
+            fh = stream.buffer
+        else:
+            fh = stream
+        close = False
     else:
-        fh = builtins.open(file, mode, *args, **kwargs)
+        fh = builtins.open(filename, mode, *args, **kwargs)
+        close = True
+
     try:
         yield fh
     finally:
-        if file != '-':
+        if close:
             fh.close()
